@@ -30,7 +30,7 @@ function clearOutput() {
   const empty = document.createElement("p");
   empty.className = "empty-preview";
   empty.textContent =
-    "Las paginas marcadas apareceran aqui para que compruebes la cobertura.";
+    "Las páginas marcadas aparecerán aquí para que compruebes la cobertura.";
   preview.append(empty);
   downloadLink.hidden = true;
   downloadLink.removeAttribute("href");
@@ -99,7 +99,7 @@ async function watermarkPdf(file, purpose) {
   }
   if (!window.pdfjsLib || !window.PDFLib)
     throw new Error(
-      "No se han cargado las bibliotecas PDF. Comprueba tu conexion.",
+      "No se han cargado las bibliotecas PDF. Comprueba tu conexión.",
     );
 
   const bytes = new Uint8Array(await file.arrayBuffer());
@@ -107,7 +107,7 @@ async function watermarkPdf(file, purpose) {
     new TextDecoder("ascii").decode(bytes.subarray(0, 1024)).indexOf("%PDF-") <
     0
   ) {
-    throw new Error("El archivo no contiene un PDF valido.");
+    throw new Error("El archivo no contiene un PDF válido.");
   }
 
   pdfjsLib.GlobalWorkerOptions.workerSrc = WORKER_URL;
@@ -117,11 +117,11 @@ async function watermarkPdf(file, purpose) {
   try {
     documentPdf = await task.promise;
     if (documentPdf.numPages < 1 || documentPdf.numPages > 2) {
-      throw new Error("El PDF debe tener una o dos paginas.");
+      throw new Error("El PDF debe tener una o dos páginas.");
     }
     const result = await PDFLib.PDFDocument.create();
     for (let index = 1; index <= documentPdf.numPages; index += 1) {
-      showStatus(`Procesando pagina ${index} de ${documentPdf.numPages}...`);
+      showStatus(`Procesando página ${index} de ${documentPdf.numPages}...`);
       const page = await documentPdf.getPage(index);
       const original = page.getViewport({ scale: 1 });
       const scale = Math.min(
@@ -134,7 +134,7 @@ async function watermarkPdf(file, purpose) {
       canvas.width = Math.round(viewport.width);
       canvas.height = Math.round(viewport.height);
       if (!canvas.width || !canvas.height)
-        throw new Error("La pagina tiene dimensiones invalidas.");
+        throw new Error("La página tiene dimensiones inválidas.");
       const context = canvas.getContext("2d");
       await page.render({
         canvasContext: context,
@@ -160,12 +160,12 @@ async function watermarkPdf(file, purpose) {
   } catch (error) {
     pendingPreviews.forEach((url) => URL.revokeObjectURL(url));
     if (error.name === "PasswordException")
-      throw new Error("No se admiten PDF protegidos con contrasena.");
+      throw new Error("No se admiten PDF protegidos con contraseña.");
     if (
       error.name === "InvalidPDFException" ||
       error.name === "MissingPDFException"
     ) {
-      throw new Error("El PDF esta danado o no se puede abrir.");
+      throw new Error("El PDF está dañado o no se puede abrir.");
     }
     throw error;
   } finally {
@@ -189,8 +189,8 @@ form.addEventListener("submit", async (event) => {
         const image = document.createElement("img");
         const caption = document.createElement("figcaption");
         image.src = url;
-        image.alt = `Pagina ${index + 1} con marca de agua`;
-        caption.textContent = `Pagina ${index + 1}`;
+        image.alt = `Página ${index + 1} con marca de agua`;
+        caption.textContent = `Página ${index + 1}`;
         figure.append(image, caption);
         return figure;
       }),
@@ -220,11 +220,11 @@ window.addEventListener("pagehide", clearOutput);
 sourceButton.addEventListener("click", async () => {
   sourceButton.disabled = true;
   auditStatus.dataset.error = "false";
-  auditStatus.textContent = "Preparando codigo...";
+  auditStatus.textContent = "Preparando código...";
   try {
     if (!window.JSZip)
       throw new Error(
-        "No se ha cargado la biblioteca ZIP. Comprueba tu conexion.",
+        "No se ha cargado la biblioteca ZIP. Comprueba tu conexión.",
       );
     const zip = new JSZip();
     for (const path of SOURCE_FILES) {
@@ -240,10 +240,10 @@ sourceButton.addEventListener("click", async () => {
     link.download = "marca-dni-codigo.zip";
     link.click();
     setTimeout(() => URL.revokeObjectURL(archiveUrl), 60_000);
-    auditStatus.textContent = "Codigo descargado.";
+    auditStatus.textContent = "Código descargado.";
   } catch (error) {
     auditStatus.dataset.error = "true";
-    auditStatus.textContent = error.message || "No se pudo preparar el codigo.";
+    auditStatus.textContent = error.message || "No se pudo preparar el código.";
   } finally {
     sourceButton.disabled = false;
   }
